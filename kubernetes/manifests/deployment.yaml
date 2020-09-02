@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mardedirac-app
+  labels:
+    name: mardedirac-app
+spec:
+  selector:
+    matchLabels:
+      app: mardedirac-app
+  #* pod template
+  template:
+    metadata:
+      labels:
+        app: mardedirac-app
+    spec:
+      containers:
+      - name: myapp #Este nombre no necesita hacer match con el app label
+        image: mardedirac86/python-container-expert:v0.1
+        livenessProbe:
+            httpGet:
+              path: /health
+              port: http
+            initialDelaySeconds: 60
+            timeoutSeconds: 10
+        readinessProbe:
+            httpGet:
+              path: /health
+              port: http
+            initialDelaySeconds: 5
+            timeoutSeconds: 10
+
+        resources:
+          limits:
+            memory: "500Mi"
+            cpu: "500m"
+          requests:
+            memory: "50Mi"
+            cpu: "100m"
+        ports:
+        - name: http
+          containerPort: 8080
